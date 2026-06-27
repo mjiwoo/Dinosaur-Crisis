@@ -9,7 +9,7 @@
 - 실행 방법
 
 1. 프로젝트 폴더를 다운로드하거나 GitHub Repository를 Clone합니다.
-2. `dinosaurtest.html` 파일을 실행합니다.
+2. `index.html` 파일을 실행합니다.
 3. 웹페이지가 실행되면 질문에 답을 선택하고 결과를 확인합니다.
 
 ---
