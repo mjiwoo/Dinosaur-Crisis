@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>공룡별 위기대처법</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #EAF6FF;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .box {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 550px;
+      margin: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+      color: #2f5d3a;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin: 12px 0;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: #8fd19e;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #6fbd82;
+    }
+
+    #resultPage {
+      display: none;
+    }
+
+    #dinoImg {
+      width: 280px;
+      max-width: 90%;
+      margin: 20px 0;
+    }
+
+    #dinoText {
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .small {
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box" id="questionPage">
+    <h1>🦖 공룡별 위기대처법</h1>
+    <p class="subtitle">나의 위기대처 유형 테스트</p>
+
+    <h2 id="questionText"></h2>
+
+    <button id="btn1" onclick="selectAnswer(0)"></button>
+    <button id="btn2" onclick="selectAnswer(1)"></button>
+    <button id="btn3" onclick="selectAnswer(2)"></button>
+    <button id="btn4" onclick="selectAnswer(3)"></button>
+
+    <p class="small" id="progressText"></p>
+  </div>
+
+  <div class="box" id="resultPage">
+    <h1 id="dinoName"></h1>
+    <img id="dinoImg" src="" alt="공룡 이미지">
+    <p id="dinoText"></p>
+    <button onclick="restart()">다시하기</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "1. 시험을 망쳤다면?",
+        answers: [
+          { text: "더 열심히 공부하기", type: "trex" },
+          { text: "공부 방법 바꾸기", type: "raptor" },
+          { text: "평소 꾸준히 복습하기", type: "ankylo" },
+          { text: "친구와 스터디하기", type: "para" }
+        ]
+      },
+      {
+        question: "2. 친구와 갈등이 생겼다면?",
+        answers: [
+          { text: "내 생각을 솔직하게 말한다", type: "trex" },
+          { text: "상황을 보고 말할 타이밍을 바꾼다", type: "raptor" },
+          { text: "감정이 가라앉을 때까지 시간을 둔다", type: "ankylo" },
+          { text: "대화로 서로의 입장을 맞춰본다", type: "para" }
+        ]
+      },
+      {
+        question: "3. 갑자기 계획이 틀어졌다면?",
+        answers: [
+          { text: "일단 바로 해결하려고 움직인다", type: "trex" },
+          { text: "새로운 계획을 빠르게 세운다", type: "raptor" },
+          { text: "위험한 부분부터 차근차근 확인한다", type: "ankylo" },
+          { text: "주변 사람과 함께 해결 방법을 찾는다", type: "para" }
+        ]
+      }
+    ];
+
+    const results = {
+      trex: {
+        name: "🦖 티라노사우루스형",
+        image: "images/trex.png",
+        text: "당신은 위기를 정면으로 돌파하는 타입입니다.<br>문제가 생기면 피하기보다 직접 부딪히며 해결하려고 합니다.<br><br><b>조언:</b> 가끔은 주변 의견도 들어보면 더 좋아요!"
+      },
+      raptor: {
+        name: "🦎 벨로시랩터형",
+        image: "images/raptor.png",
+        text: "당신은 상황에 맞게 빠르게 적응하는 타입입니다.<br>계획이 바뀌어도 새로운 방법을 찾는 능력이 좋습니다.<br><br><b>조언:</b> 너무 급하게 결정하지 않도록 조심해요!"
+      },
+      ankylo: {
+        name: "🛡️ 안킬로사우루스형",
+        image: "images/ankylo.png",
+        text: "당신은 신중하게 준비하며 위기를 막는 타입입니다.<br>갑작스러운 상황에서도 차분하게 문제를 정리하려고 합니다.<br><br><b>조언:</b> 너무 걱정만 하지 말고 실행도 해보세요!"
+      },
+      para: {
+        name: "🦕 파라사우롤로푸스형",
+        image: "images/para.png",
+        text: "당신은 혼자 해결하기보다 사람들과 함께 위기를 극복하는 타입입니다.<br>소통과 협력을 통해 더 좋은 해결책을 찾습니다.<br><br><b>조언:</b> 남의 의견만 따르기보다 내 생각도 표현해보세요!"
+      },
+      super: {
+  name: "🌈 초특급공룡형",
+  image: "images/super.png",
+  text: "당신은 한 가지 방식만 고집하지 않고 다양한 위기 대처 방식을 가진 타입입니다.<br>상황에 따라 정면 돌파, 적응, 준비, 협력을 모두 활용할 수 있어요.<br><br><b>조언:</b> 자신만의 대처 방식을 만들면 더 강해질 수 있어요!"
+}
+    };
+
+    let currentQuestion = 0;
+
+    let score = {
+      trex: 0,
+      raptor: 0,
+      ankylo: 0,
+      para: 0
+    };
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+
+      document.getElementById("questionText").innerText = q.question;
+      document.getElementById("btn1").innerText = q.answers[0].text;
+      document.getElementById("btn2").innerText = q.answers[1].text;
+      document.getElementById("btn3").innerText = q.answers[2].text;
+      document.getElementById("btn4").innerText = q.answers[3].text;
+
+      document.getElementById("progressText").innerText =
+        `${currentQuestion + 1} / ${questions.length}`;
+    }
+
+    function selectAnswer(answerIndex) {
+      const selectedType = questions[currentQuestion].answers[answerIndex].type;
+      score[selectedType]++;
+
+      currentQuestion++;
+
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+  document.getElementById("questionPage").style.display = "none";
+  document.getElementById("resultPage").style.display = "block";
+
+  let maxScore = Math.max(score.trex, score.raptor, score.ankylo, score.para);
+
+  let topTypes = [];
+
+  for (let type in score) {
+    if (score[type] === maxScore) {
+      topTypes.push(type);
+    }
+  }
+
+  let finalType;
+
+  if (topTypes.length >= 2) {
+    finalType = "super";
+  } else {
+    finalType = topTypes[0];
+  }
+
+  document.getElementById("dinoName").innerHTML = results[finalType].name;
+  document.getElementById("dinoImg").src = results[finalType].image;
+  document.getElementById("dinoText").innerHTML = results[finalType].text;
+}
+
+    function restart() {
+      currentQuestion = 0;
+      score = {
+        trex: 0,
+        raptor: 0,
+        ankylo: 0,
+        para: 0
+      };
+
+      document.getElementById("resultPage").style.display = "none";
+      document.getElementById("questionPage").style.display = "block";
+
+      showQuestion();
+    }
+
+    showQuestion();
+  </script>
+
+</body>
+</html>
